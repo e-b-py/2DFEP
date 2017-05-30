@@ -13,8 +13,8 @@ min_value = scalar_data.GetScalarRange()[0]
 max_value = scalar_data.GetScalarRange()[1]
 lookup_table = vtk.vtkLookupTable()
 lookup_table.Build()
-lookup_table.SetRange(scalar_data.GetScalarRange())
-element_mapper.SetScalarRange(scalar_data.GetScalarRange())
+lookup_table.SetRange(0, scalar_data.GetScalarRange()[1])
+element_mapper.SetScalarRange(0, scalar_data.GetScalarRange()[1])
 element_mapper.SetLookupTable(lookup_table)
 print element_mapper.GetLookupTable().GetRange()
 # Actor

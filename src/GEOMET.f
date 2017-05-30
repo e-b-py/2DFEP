@@ -97,7 +97,8 @@ C     .. Executable statements ..
 C
 C     Open the files for I/O
 C
-      OPEN(UNIT=11, FILE='input.dat')
+C      OPEN(UNIT=11, FILE='input.dat')
+      OPEN(UNIT=11, FILE='/dev/stdin')
       OPEN(UNIT=12, FILE='../out/output.dat')
 C
 C     Read the name of the meshfile, element type and problem type

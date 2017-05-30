@@ -1,8 +1,8 @@
 C     ..
 C     .. Parameters ..
 C     ..
-      PARAMETER        ( MAXND = 2000,
-     ;                   MAXEL = 2000,
+      PARAMETER        ( MAXND = 3000,
+     ;                   MAXEL = 3000,
      ;                   MAXRT = 20,
      ;                   MAXDF = 2*MAXND,
      ;                   MAXSL = 20,
@@ -118,24 +118,24 @@ C
      ;            KG, LDKG, FG, D)
       PRINT *, "ASSEMB finished successfully"
       PRINT *, 
-      DO 80 I = 1, NDOF
-         WRITE(34,*)
-         DO 90 J = 1, NDOF
-            WRITE(34, '(E26.16)', ADVANCE='NO') KG(I, J)
-   90    CONTINUE
-   80    CONTINUE
-      DO 100 I = 1, NDOF
-         WRITE(36, '(F26.16)') FG(I)
-  100 CONTINUE
+C      DO 80 I = 1, NDOF
+C         WRITE(34,*)
+C         DO 90 J = 1, NDOF
+C            WRITE(34, '(E26.16)', ADVANCE='NO') KG(I, J)
+C   90    CONTINUE
+C   80    CONTINUE
+C      DO 100 I = 1, NDOF
+C         WRITE(36, '(F26.16)') FG(I)
+C  100 CONTINUE
       PRINT *, "Starting GSOLVE ..."
       CALL GSOLVE(KG, LDKG, NDOF, NDOF, DSPG, FG)
       PRINT *, "GSOLVE finished succesfully"
       PRINT *, 
-C      PRINT *, "GSOLVE finished successfully"
-C      PRINT *, 'GLOBAL DISPLACEMENTS'
-C      DO 110 I = 1, NDOF
-C         WRITE(*, '(F18.10)') DSPG(I)
-C  110 CONTINUE
+      PRINT *, "GSOLVE finished successfully"
+      WRITE(42, '(/A//)') 'GLOBAL DISPLACEMENTS'
+      DO 110 I = 1, NDOF
+         WRITE(42, '(F18.10)') DSPG(I)
+  110 CONTINUE
       PRINT *, "Starting POST ..."
       CALL POST(CON, LDCON, CRD, LDCRD, IDOF, LDIDOF, ELDS, LDELDS, 
      ;          DSPG, D)
