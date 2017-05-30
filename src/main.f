@@ -23,7 +23,7 @@ C     .. Array Variables ..
 C     ..
       INTEGER*4        CON(MAXEL, 8), IDOF(MAXND, 2), ERST(MAXRT, 2),
      ;                 PRST(MAXRT, 2), RBEL(MAXBE, 4), LBEL(MAXBE, 4), 
-     ;                 RNOD(MAXBN, 2), LNOD(MAXBN, 2)
+     ;                 RNOD(MAXBN, 2), LNOD(MAXBN, 2), DOUT(50)
      
       REAL*8           CRD(MAXND, 2), CMAT(4), D(3, 3),
      ;                 SLDS(MAXSL, 7), NLDS(MAXDF), VLDS(MAXVL, 2),
@@ -80,7 +80,8 @@ C
       RNOD = 0
       IDOF = 0
       ERST = 0
-      PRST =0
+      PRST = 0
+      DOUT = 0
 C
       CRD  = 0.D0
       CMAT = 0.D0
@@ -99,7 +100,7 @@ C
       PRINT *, "Starting GEOMET ..."
       CALL GEOMET(CRD, LDCRD, CON, LDCON, LBEL, LDLBEL, RBEL, LDRBEL,
      ;            LNOD, LDLNOD, RNOD, LDRNOD, CMAT, ERST, LDERST, 
-     ;            PRST, LDPRST)
+     ;            PRST, LDPRST, DOUT)
       PRINT *, "GEOMET finished successfully"
       PRINT *, 
       PRINT *, "Starting SCODE ..."
@@ -131,14 +132,13 @@ C  100 CONTINUE
       CALL GSOLVE(KG, LDKG, NDOF, NDOF, DSPG, FG)
       PRINT *, "GSOLVE finished succesfully"
       PRINT *, 
-      PRINT *, "GSOLVE finished successfully"
-      WRITE(42, '(/A//)') 'GLOBAL DISPLACEMENTS'
-      DO 110 I = 1, NDOF
-         WRITE(42, '(F18.10)') DSPG(I)
-  110 CONTINUE
+C      WRITE(42, '(/A//)') 'GLOBAL DISPLACEMENTS'
+C      DO 110 I = 1, NDOF
+C         WRITE(42, '(F18.10)') DSPG(I)
+C  110 CONTINUE
       PRINT *, "Starting POST ..."
       CALL POST(CON, LDCON, CRD, LDCRD, IDOF, LDIDOF, ELDS, LDELDS, 
-     ;          DSPG, D)
+     ;          DSPG, D, DOUT)
       PRINT *, "POST finished succesfully"
       PRINT *, 
       PRINT *, "Program stopped without errors"

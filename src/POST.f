@@ -1,7 +1,7 @@
 
 C =====================================================================
       SUBROUTINE POST(CON, LDCON, CRD, LDCRD, IDOF, LDIDOF, 
-     ;                ELDS, LDELDS, DSPG, D)
+     ;                ELDS, LDELDS, DSPG, D, DOUT)
 C
 C     Output the requested nodal displacements, compute the gradients of
 C     the solution
@@ -12,6 +12,7 @@ C     ..
 C     .. Array Arguments ..
 C     INTEGER*4        CON(LDCON, *)  : Connectivity matrix
 C                      IDOF(LDIDOF, *): Matrix of the degrees of freedom
+C                      DOUT(*)        : Displacement output nodes
 C
 C     REAL*8           CRD(LDCRD, *)  : Matrix of coordinates
 C                      ELDS(LDELDS, *): Matrix of element loads
@@ -21,9 +22,11 @@ C     ..
 C     .. Local Scalars ..
 C     INTEGER*4        VTKCT    : Cell type for vtk file
 C                      DSCALE   : Deformation scale
-C                      NOUT     : Number of output node groups
+C                      NODN     : Number of the node 
+C                      CDOF     : Current DOF in generic loop
 C
-C     REAL*8         
+C     REAL*8           UX       : Displacement along x
+C                      UY       : Displacement along y
 C
 C     ..
 C     .. Local Arrays ..
@@ -54,13 +57,13 @@ C     .. Scalar Arguments ..
       INTEGER*4        LDCON, LDIDOF, LDCRD, LDELDS
 C     ..
 C     .. Array Arguments ..
-      INTEGER*4        CON(LDCON, *), IDOF(LDIDOF, *)
+      INTEGER*4        CON(LDCON, *), IDOF(LDIDOF, *), DOUT(*)
       REAL*8           CRD(LDCRD, *), ELDS(LDELDS, *), DSPG(*), D(3, 3)
 C     ..
 C =====================================================================
 C     .. Local Scalars ..
-      INTEGER*4        VTKCT
-      REAL*8           DSCALE
+      INTEGER*4        VTKCT, NODN, CDOF
+      REAL*8           DSCALE, UX, UY
 C     ..
 C     .. Local Arrays ..
 
@@ -140,12 +143,16 @@ C
 C
 C     Write the displacements of the specified output nodes to file
 C
-c     READ(11, *)
-C     READ(11, *) NOUT
-C
+      WRITE(42, '(A, T15, A, T40, A)') 'Node', 'u(mm)', 'v(mm)'
+      DO 110 I = 1, 50
+         IF ( DOUT(I).EQ.0 ) GO TO 799
+         WRITE(42, '(I4, T10, F15.12, T35, F15.12)')
+     ;   DOUT(I), DSPG(IDOF(DOUT(I), 1))*1000.D0,
+     ;            DSPG(IDOF(DOUT(I), 2))*1000.D0
+  110 CONTINUE
 C     Compute and write the stresses
 C
-      IF ( ETYPE.EQ.0 ) GO TO 800
+  799 IF ( ETYPE.EQ.0 ) GO TO 800
       IF ( ETYPE.EQ.2 ) GO TO 802
   800 CALL ST3(CON, LDCON, CRD, LDCRD, IDOF, LDIDOF, DSPG, D)
   802 RETURN

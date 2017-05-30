@@ -2,7 +2,7 @@ C
 C =====================================================================
       SUBROUTINE GEOMET(CRD, LDCRD, CON, LDCON, LBEL, LDLBEL, RBEL,
      ;                  LDRBEL, LNOD, LDLNOD, RNOD, LDRNOD, CMAT, ERST, 
-     ;                  LDERST, PRST, LDPRST)
+     ;                  LDERST, PRST, LDPRST, DOUT)
 C
 C     Read the node, element, material, restraint, and load data
 C     data provided in the input and mesh files into the related 
@@ -20,6 +20,7 @@ C                      LBEL(LDLBEL, *): Loaded boundary elements
 C                      RBEL(LDRBEL, *): Restrained boundary elements
 C                      LNOD(LDLNOD, *): Loaded points
 C                      RNOD(LDRNOD, *): Restrained points
+C                      DOUT(*)        : Nodes for outputting disp.
 C
 C     REAL*8           CRD(LDCRD, *)  : Matrix of nodal coordinates
 C                      CMAT(4)        : Vector of material properties
@@ -37,6 +38,9 @@ C                      LLP  : Line length of point elements
 C                      TBE  : Tag of boundary elements
 C                      TDE  : Tag of domain elements
 C                      TPE  : Tag of point elements
+C                      DOUTL: Displacement output group label
+C                      NOUT : Number of nodes the disp. of which will be
+C                             printed
 C     .. 
 C     .. Local Arrays  ..
 C     INTEGER*4        GRB(20)        : Vector to read unnecessary data 
@@ -72,13 +76,13 @@ C     ..
 C     .. Array Arguments ..
       INTEGER*4        CON(LDCON, *), ERST(LDERST, *), PRST(LDPRST, *),
      ;                 RBEL(LDRBEL, *), LBEL(LDLBEL, *),RNOD(LDRNOD, *),
-     ;                 LNOD(LDLNOD, *)
+     ;                 LNOD(LDLNOD, *), DOUT(*)
       REAL*8           CRD(LDCRD, *), CMAT(4)
 C     ..
 C =====================================================================
 C     .. Local Scalars
       INTEGER*4        NRL, NLL, NRPL, NLPL, NT, LABEL, LLB, LLD, LLP,
-     ;                 TBE, TDE, TPE
+     ;                 TBE, TDE, TPE, DOUTL, NOUT
 C     .. 
 C     .. Local Arrays
       INTEGER*4        GRB(20), LGRP(20), RGRP(20), LPGRP(20), RPGRP(20)
@@ -141,6 +145,8 @@ C
       DO 40 I = 1, NLPL
          READ(11, *) LPGRP(I)
    40 CONTINUE
+      READ(11, *)
+      READ(11, *) DOUTL
 C
 C     Open the mesh file, read the nodal coordinates
 C
@@ -212,6 +218,10 @@ C     Read points
                LNOD(NLNOD, 2) = GRB(6)
             ENDIF
    80    CONTINUE
+         IF ( DOUTL.EQ.LABEL) THEN
+            NOUT = NOUT + 1
+            DOUT(NOUT) = GRB(6)
+         ENDIF
    60 CONTINUE
   900 BACKSPACE(13)
 C     Read elements
