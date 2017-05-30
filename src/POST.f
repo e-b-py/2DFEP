@@ -146,7 +146,8 @@ C
 C     Compute and write the stresses
 C
       IF ( ETYPE.EQ.0 ) GO TO 800
+      IF ( ETYPE.EQ.2 ) GO TO 802
   800 CALL ST3(CON, LDCON, CRD, LDCRD, IDOF, LDIDOF, DSPG, D)
-      RETURN
+  802 RETURN
       END
          

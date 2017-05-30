@@ -18,17 +18,13 @@ C                      VLDS(LDVLDS, *): Matrix of volume loads
 C                      FL(12)         : Local force matrix
 C     ..
 C     .. Local Scalars ..
-C     INTEGER*4        CDOF : Current DOF used when looping through DOFs
-C                      NLDOF: Number of local degrees of freedom
+C     INTEGER*4        
 C                      
-C     REAL*8           ALPH: Thermal expansion coefficient
-C                      GAMM: Unit weight
+C     REAL*8           GAMM: Unit weight
 C                      A   : Area of the element
-C                      GY  : Self weight
 C                      B1, B2, B3, C1, C2, C3, D11, D12, D21, D22, D33
 C     ..
 C     .. Local Arrays ..
-C     INTEGER*4        NODE(6)        : Nodes of the element
 C     INTEGER*4        PRM(6)         : Permutation vector
 C     
 C     REAL*8           COEFF(3, 3)    : Matrix that stores a_i, b_i, c_i    
@@ -60,12 +56,11 @@ C     .. Array Arguments ..
 C     ..
 C =====================================================================
 C     .. Local Scalars ..
-      INTEGER*4        CDOF, NLDOF
-      REAL*8           ALPH, GAMM, A, GY, B1, B2, B3, C1, C2, C3,
+      REAL*8           GAMM, A, B1, B2, B3, C1, C2, C3,
      ;                 D11, D12, D21, D22, D33
 C     ..
 C     .. Local Arrays ..
-      INTEGER*4        NODE(8), PRM(6)
+      INTEGER*4        PRM(6)
       REAL*8           COEFF(3, 3)
 C     .. Common Scalars ..
       INTEGER*4        NNODE, NELE, NRBEL, NLBEL, NRNOD, NLNOD, NERST,

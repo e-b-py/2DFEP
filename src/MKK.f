@@ -106,8 +106,9 @@ C
       WRITE(30, '(A, I5//)') 'Elemenent:', I
       IF ( ETYPE.EQ.0 ) GO TO 800
 C      IF ( ETYPE.EQ.1 ) GO TO 801
-C      IF ( ETYPE.EQ.2 ) GO TO 802
+      IF ( ETYPE.EQ.2 ) GO TO 802
   800 CALL T3(ELCOR, CMAT, D, KL, VLDS, LDVLDS, FL)
+  802 CALL ISOQ4(ELCOR, CMAT, D, KL, VLDS, LDVLDS, FL)
 C
 C    1 
 C

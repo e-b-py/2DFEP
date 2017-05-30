@@ -91,20 +91,22 @@ CCCCCCCCCCCCCCCCCCCCCC   D E B U G   CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
       WRITE(26, '(/A//)') 'XASSEMB DEBUG FILE'
       WRITE(26, '(A/)') 'In  ASSEMB.f'
       WRITE(26, *) 'Matrix: CON'
-      WRITE(26, '(3I5)')
       DO 901 K = 1, NELE
-         WRITE(26, *) CON(K, 1), CON(K, 2), CON(K, 3)
+         WRITE(26, *)
+         DO 902 L = 1, NECO
+            WRITE(26, '(I6)', ADVANCE='NO') CON(K, L)
+  902    CONTINUE
   901 CONTINUE
       WRITE(26, '(/A/)') 'Matrix: CRD'
       WRITE(26, *)
-      DO 902 K = 1, NNODE
+      DO 903 K = 1, NNODE
          WRITE(26, '(F6.2, F6.2)') CRD(K, 1), CRD(K, 2)
-  902 CONTINUE
+  903 CONTINUE
       WRITE(26, '(/A/)') 'Matrix: IDOF'
       WRITE(26, *)
-      DO 903 K = 1, NNODE
+      DO 904 K = 1, NNODE
          WRITE(26, '(I6, I6)') IDOF(K, 1), IDOF(K, 2)
-  903 CONTINUE
+  904 CONTINUE
 CCCCCCCCCCCCCCCCCCCCCC   D E B U G   CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 C
 C     Initialize D according to specified PTYPE
@@ -126,9 +128,9 @@ C
       ENDIF
       WRITE(26, '(/A/)') 'Matrix: D'
       WRITE(26, *)
-      DO 904 K = 1, 3
+      DO 905 K = 1, 3
          WRITE(26, '(F20.4, F20.4, F20.4)') D(K, 1), D(K, 2), D(K, 3)
-  904 CONTINUE
+  905 CONTINUE
 C
 C     Loop over elements
 C
@@ -151,16 +153,16 @@ C
          WRITE(26, *)
          WRITE(26, '(I3)') (ELDOF(K), K=1,NELDOF)
          WRITE(26, '(/A/)') 'Matrix: KL (Local Stiffness Matrix)'
-         DO 905 K = 1, NELDOF
+         DO 906 K = 1, NELDOF
             WRITE(26, *)
-            DO 906 L = 1, NELDOF
+            DO 907 L = 1, NELDOF
                WRITE(26, '(E10.2)', ADVANCE='NO') KL(K, L)
-  906       CONTINUE
-  905    CONTINUE
+  907       CONTINUE
+  906    CONTINUE
          WRITE(26, '(/A/)') 'Matrix: FL (Local Force Matrix)'
-         DO 907 K = 1, NELDOF
+         DO 908 K = 1, NELDOF
             WRITE(26, '(F8.2)') FL(K)
-  907    CONTINUE
+  908    CONTINUE
 C
          DO 40 M = 1, NELDOF
             RI = ELDOF(M)

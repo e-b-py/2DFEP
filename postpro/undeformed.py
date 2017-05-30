@@ -3,7 +3,6 @@ import vtk
 # Reader
 reader = vtk.vtkUnstructuredGridReader()
 reader.SetFileName("../out/mesh.vtk")
-#reader.SetFileName("gmsh_output.vtk")
 reader.Update()
 # Extract edges
 edges = vtk.vtkExtractEdges()

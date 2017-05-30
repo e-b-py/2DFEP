@@ -98,12 +98,12 @@ C
 C     Open the files for I/O
 C
       OPEN(UNIT=11, FILE='input.dat')
-      OPEN(UNIT=12, FILE='./out/output.dat')
+      OPEN(UNIT=12, FILE='../out/output.dat')
 C
 C     Read the name of the meshfile, element type and problem type
 C
       READ(11, '(//)')
-      READ(11, *) MESH
+      READ(11, '(A)') MESH
       READ(11, *)
       READ(11, *) ETYPE
       READ(11, *)
