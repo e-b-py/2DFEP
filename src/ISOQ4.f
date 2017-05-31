@@ -107,7 +107,7 @@ C
       WRITE(28, '(A, F18.10, F18.10)') 'GP', GP(1), GP(2)
       WRITE(28, '(A, F18.10, F18.10)') 'W', W(1), W(2)
 C
-C     Loop through the Gauss Points
+C     Loop over Gauss Points
 C
       GAMM = CMAT(3)
       THCK = CMAT(4)

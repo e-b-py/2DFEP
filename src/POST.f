@@ -30,9 +30,7 @@ C                      UY       : Displacement along y
 C
 C     ..
 C     .. Local Arrays ..
-C     INTEGER*4        ELDOF(6) : Global DOFs corresponding to locals 
-C
-C     REAL*8    
+C     REAL*8           UCRD(NNODE, 2): Updated coordinates
 C            
 C     ..
 C     .. Common Scalars ..
@@ -66,6 +64,7 @@ C     .. Local Scalars ..
       REAL*8           DSCALE, UX, UY
 C     ..
 C     .. Local Arrays ..
+      REAL*8           UCRD(NNODE, 2)
 
 C     .. Common Scalars ..
       INTEGER*4        NNODE, NELE, NRBEL, NLBEL, NRNOD, NLNOD, NERST,
@@ -109,24 +108,28 @@ C
 C
 C     Update coordinates
 C
+      UCRD = 0.D0
       DSCALE = 500.D0
       DO 50 I = 1, NNODE
          DO 60 J = 1, 2
-            IF ( IDOF(I, J).EQ.-1 ) GO TO 50
-            CRD(I, J) = CRD(I, J) + DSPG(IDOF(I, J))*DSCALE
+            IF ( IDOF(I, J).EQ.-1 ) THEN 
+               UCRD(I, J) = CRD(I, J)
+               GO TO 60
+            ENDIF
+            UCRD(I, J) = CRD(I, J) + DSPG(IDOF(I, J))*DSCALE
    60    CONTINUE
    50 CONTINUE
 C
 C     Write deformed mesh to vtk file
 C
       WRITE(46, '(A)') '# vtk DataFile Version 2.0'
-      WRITE(46, '(A)') 'undeformed mesh'
+      WRITE(46, '(A)') 'deformed mesh'
       WRITE(46, '(A)') 'ASCII'
       WRITE(46, '(A)') 'DATASET UNSTRUCTURED_GRID'
       WRITE(46, '(A, I6, A)') 'POINTS', NNODE, ' float'
       DO 70 I = 1, NNODE
          WRITE(46, '(F22.16, F22.16, F22.16)') 
-     ;               CRD(I, 1), CRD(I, 2), 0.D0
+     ;               UCRD(I, 1), UCRD(I, 2), 0.D0
    70 CONTINUE
       WRITE(46, '(/A, I6, I6)') 'CELLS', NELE, NELE*(NECO+1)
       DO 80 I = 1, NELE
@@ -153,8 +156,11 @@ C
 C     Compute and write the stresses
 C
   799 IF ( ETYPE.EQ.0 ) GO TO 800
-      IF ( ETYPE.EQ.2 ) GO TO 802
-  800 CALL ST3(CON, LDCON, CRD, LDCRD, IDOF, LDIDOF, DSPG, D)
+      IF ( ETYPE.EQ.2 ) GO TO 801
+  800 CALL ST3(CON, LDCON, UCRD, IDOF, LDIDOF, DSPG, D)
+      GO TO 802
+  801 CALL SQ4(CON, LDCON, CRD, LDCRD, UCRD, IDOF, LDIDOF, DSPG, D)
+      GO TO 802
   802 RETURN
       END
          

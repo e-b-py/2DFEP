@@ -1,18 +1,18 @@
 C =====================================================================
-      SUBROUTINE ST3(CON, LDCON, CRD, LDCRD, IDOF, LDIDOF, 
+      SUBROUTINE ST3(CON, LDCON, UCRD, IDOF, LDIDOF, 
      ;                DSPG, D)
 C
 C     Compute sig_xx, sig_yy, sig_xy, principal min and max stresses, 
 C     their orientations and Von Mises stresses for T3 elements
 C
 C     .. Scalar Arguments ..
-C     INTEGER*4        LDCON, LDCRD, LDIDOF
+C     INTEGER*4        LDCON, LDIDOF
 C     ..
 C     .. Array Arguments ..
 C     INTEGER*4        CON(LDCON, *)  : Connectivity matrix
 C                      IDOF(LDIDOF, *): Matrix of the degrees of freedom
 C
-C     REAL*8           CRD(LDCRD, *)  : Matrix of coordinates
+C     REAL*8           UCRD(NNODE, 2) : Matrix of updated coordinates
 C                      DSPG(*)        : Global nodal displacement vector
 C                      D(3, 3)        : Material stiffness matrix
 C     ..
@@ -62,7 +62,7 @@ C     .. Scalar Arguments ..
 C     ..
 C     .. Array Arguments ..
       INTEGER*4        CON(LDCON, *), IDOF(LDIDOF, *)
-      REAL*8           CRD(LDCRD, *), DSPG(*), D(3, 3)
+      REAL*8           UCRD(NNODE, 2), DSPG(*), D(3, 3)
 C     ..
 C =====================================================================
 C     .. Local Scalars ..
@@ -85,6 +85,8 @@ C     .. Common Scalars ..
 C     ..
 C     .. Executable statements ..
 C
+      OPEN(UNIT=96, FILE='../debug/stress_t3.dat')
+      WRITE(96, '(/A//)') 'CST Stress Routine -- DEBUG'
       REWIND(92)
       ELDOF = 0
       COEFF = 0.D0
@@ -99,7 +101,7 @@ C
          WRITE(I, '(A, I6, A)') 'POINTS', NNODE, ' float'
          DO 20 J = 1, NNODE
             WRITE(I, '(F22.16, F22.16, F22.16)') 
-     ;                  CRD(J, 1), CRD(J, 2), 0.D0
+     ;                  UCRD(J, 1), UCRD(J, 2), 0.D0
    20    CONTINUE
          WRITE(I, '(/A, I6, I6)') 'CELLS', NELE, NELE*(NECO+1)
          DO 30 J = 1, NELE
@@ -135,10 +137,21 @@ C
 C
 C     <<<  ELEMENT LOOP >>>
 C
+      B = 0.D0
       DO 60 I = 1, NELE
          READ(92) ELDOF
+         WRITE(96, '(/A/)') 'Matrix: ELDOF'
+         DO 901 K = 1, 6
+            WRITE(96, '(I5)') ELDOF(K)
+  901    CONTINUE
          READ(92) COEFF
+         WRITE(96, '(/A/)') 'Matrix: COEFF'
+         DO 902 K = 1, 3
+            WRITE(96, '(F10.6, F10.6, F10.6)') COEFF(K, 1), COEFF(K, 2),
+     ;                                         COEFF(K, 3)
+  902    CONTINUE
          READ(92) A
+         WRITE(96, '(/A, F10.6/)') 'Element Area = ', A
          B(1, 1) = COEFF(1, 2)
          B(1, 3) = COEFF(2, 2)
          B(1, 5) = COEFF(3, 2)
@@ -151,6 +164,14 @@ C
          B(3, 4) = B(1, 3)
          B(3, 5) = B(2, 6)
          B(3, 6) = B(1, 5)
+         B = B / (2*A)
+         WRITE(96, '(/A/)') 'B Matrix'
+         DO 903 K = 1, 3
+            WRITE(96, *)
+            DO 904 L = 1, 6
+               WRITE(96, '(F10.6)', ADVANCE='NO') B(K, L)
+  904       CONTINUE
+  903    CONTINUE
 C
 C        Retrieve local displacements
 C
